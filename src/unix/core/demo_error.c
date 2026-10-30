@@ -61,6 +61,7 @@ int main(void)
 
     if_err(divide) {
         error_code_t error = get_err(divide);
+        clear_err(divide);
 
         if (error == ERR_DIVIDE_BY_ZERO) {
             printf("divide by zero error\n");
