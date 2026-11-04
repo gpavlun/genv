@@ -36,11 +36,10 @@ static _Thread_local emergency_error_t emergency_error = {
 /*
  * Find an existing error entry.
  */
-static error_entry_t *find_entry(function_id_t function)
-{
+static error_entry_t *find_entry(function_id_t function){
     error_entry_t *entry = error_entries;
 
-    while (entry != NULL) {
+    while (entry) {
         if (entry->function == function)
             return entry;
 
@@ -53,16 +52,15 @@ static error_entry_t *find_entry(function_id_t function)
 /*
  * Obtain an existing entry or allocate a new one.
  */
-static error_entry_t *get_entry(function_id_t function)
-{
+static error_entry_t *get_entry(function_id_t function){
     error_entry_t *entry = find_entry(function);
 
-    if (entry != NULL)
+    if (entry)
         return entry;
 
     entry = malloc(sizeof(*entry));
 
-    if (entry == NULL)
+    if (!entry)
         return NULL;
 
     entry->function = function;
@@ -79,8 +77,7 @@ static error_entry_t *get_entry(function_id_t function)
  *
  * This operation never allocates memory.
  */
-static void set_memory_failure(function_id_t function)
-{
+static void set_memory_failure(function_id_t function){
     emergency_error.active = true;
     emergency_error.function = function;
 }
@@ -88,9 +85,8 @@ static void set_memory_failure(function_id_t function)
 /*
  * Clear a function's error state.
  */
-void error_clear(function_id_t function)
-{
-    if (function == NULL)
+void error_clear(function_id_t function){
+    if (!function)
         return;
 
     /*
@@ -108,16 +104,15 @@ void error_clear(function_id_t function)
      */
     error_entry_t *entry = find_entry(function);
 
-    if (entry != NULL)
+    if (entry)
         entry->error = ERR_NONE;
 }
 
 /*
  * Set a function's error state.
  */
-bool error_set(function_id_t function, error_code_t error)
-{
-    if (function == NULL)
+bool error_set(function_id_t function, error_code_t error){
+    if (!function)
         return false;
 
     /*
@@ -145,7 +140,7 @@ bool error_set(function_id_t function, error_code_t error)
      *
      * Fall back to the emergency channel.
      */
-    if (entry == NULL) {
+    if (!entry) {
         set_memory_failure(function);
         return false;
     }
@@ -158,9 +153,8 @@ bool error_set(function_id_t function, error_code_t error)
 /*
  * Retrieve a function's current error.
  */
-error_code_t error_get(function_id_t function)
-{
-    if (function == NULL)
+error_code_t error_get(function_id_t function){
+    if (!function)
         return ERR_NONE;
 
     /*
@@ -177,7 +171,7 @@ error_code_t error_get(function_id_t function)
      */
     error_entry_t *entry = find_entry(function);
 
-    if (entry == NULL)
+    if (!entry)
         return ERR_NONE;
 
     return entry->error;
@@ -194,11 +188,10 @@ bool error_exists(function_id_t function)
 /*
  * Release all error manager resources for this thread.
  */
-void error_shutdown(void)
-{
+void error_shutdown(void){
     error_entry_t *entry = error_entries;
 
-    while (entry != NULL) {
+    while (entry) {
         error_entry_t *next = entry->next;
 
         free(entry);
@@ -209,4 +202,13 @@ void error_shutdown(void)
 
     emergency_error.active = false;
     emergency_error.function = NULL;
+}
+
+
+
+error_code_t error_consume(function_id_t function){
+    error_code_t err = error_get(function);
+    error_clear(function);
+
+    return err;
 }

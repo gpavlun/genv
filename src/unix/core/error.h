@@ -34,6 +34,8 @@ error_code_t error_get(function_id_t function);
 
 bool error_exists(function_id_t function);
 
+error_code_t error_consume(function_id_t function);
+
 /*
  * Public convenience interface.
  *
@@ -46,11 +48,16 @@ bool error_exists(function_id_t function);
 #define set_err(function, code) \
     error_set((function_id_t)(function), (code))
 
-#define get_err(function) \
+#define read_err(function) \
     error_get((function_id_t)(function))
 
+#define get_err(function) \
+   error_consume((function_id_t)(function))
+
 #define if_err(function) \
-    if (error_exists((function_id_t)(function)))
+    if(error_exists((function_id_t)(function)))
+
+
 
 /*
  * Release error manager resources for the current thread.

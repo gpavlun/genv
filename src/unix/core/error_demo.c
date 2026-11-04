@@ -9,8 +9,7 @@ enum {
 };
 
 
-int divide2(int a, int b)
-{
+int divide2(int a, int b){
     clear_err(divide2);
 
     if (b == 0) {
@@ -21,8 +20,7 @@ int divide2(int a, int b)
     return a / b;
 }
 
-int divide1(int a, int b)
-{
+int divide1(int a, int b){
     clear_err(divide1);
 
     if (b == 0) {
@@ -33,8 +31,7 @@ int divide1(int a, int b)
     return a / b;
 }
 
-int divide(int a, int b)
-{
+int divide(int a, int b){
     clear_err(divide);
 
     if (b == 0) {
@@ -45,8 +42,7 @@ int divide(int a, int b)
     return a / b;
 }
 
-int main(void)
-{
+int main(void){
     int value = divide(10, 0);
 
     if_err(divide) {
@@ -68,7 +64,7 @@ int main(void)
         }
     }
     if_err(divide1) {
-        error_code_t error = get_err(divide);
+        error_code_t error = get_err(divide1);
 
         if (error == ERR_DIVIDE_BY_ZERO) {
             printf("divide by zero error\n");
@@ -81,11 +77,6 @@ int main(void)
     if_err(divide2) {
         printf("are you sure?\n");
     }
-
-
-
-
-
 
 
     error_shutdown();
